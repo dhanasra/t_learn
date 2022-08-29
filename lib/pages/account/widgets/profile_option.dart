@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
@@ -22,7 +23,7 @@ class ProfileOption extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(blunt),
         decoration: BoxDecoration(
-            color: tcGrey,
+            color: Theme.of(context).canvasColor.withOpacity(0.4),
             borderRadius: BorderRadius.circular(blunt)
         ),
         child: Icon(icon, color: isPrimary ? Colors.deepOrangeAccent : primaryColor, size: 18,),
@@ -34,11 +35,11 @@ class ProfileOption extends StatelessWidget {
             fontWeight: FontWeight.w400,
             color: isPrimary ? Colors.deepOrangeAccent : null
         ),
-      ),
+      ).tr(),
       trailing: Container(
         padding: const EdgeInsets.all(blunt),
         decoration: BoxDecoration(
-            color: tcGrey,
+            color: Theme.of(context).canvasColor.withOpacity(0.4),
             borderRadius: BorderRadius.circular(circle)
         ),
         child: Icon(Icons.keyboard_arrow_right_rounded, color: isPrimary ? Colors.deepOrangeAccent : tcBlack, size: 18,),

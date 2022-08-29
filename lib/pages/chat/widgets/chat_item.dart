@@ -1,98 +1,127 @@
-import 'dart:math';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:t_learn/pages/chat/blocs/chat_bloc/chat_bloc.dart';
+import 'package:t_learn/pages/chat/widgets/chat_item_wrapper.dart';
+import 'package:t_learn/utils/utils.dart';
+import 'package:t_learn/utils/widgets/constants.dart';
+import 'package:t_learn/widgets/loading.dart';
 
 class ChatItem extends StatelessWidget {
 
   final String content;
-  final String date;
+  final String? contentImg;
+  final String contentId;
+  final int date;
   final bool isMe;
+  final String userImage;
 
   const ChatItem({
     Key? key,
+    required this.contentImg,
     required this.content,
+    required this.contentId,
     required this.date,
-    required this.isMe
+    required this.isMe,
+    required this.userImage
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    ValueNotifier deleteShow = ValueNotifier<bool>(false);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if(!isMe) const Padding(
-            padding: EdgeInsets.all(5),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundImage: AssetImage("assets/images/profile_pic.jpeg"),
+      child: GestureDetector(
+        onLongPress: ()=>deleteShow.value = true,
+        child: Column(
+          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            ValueListenableBuilder(
+                valueListenable: deleteShow,
+                builder: (_, isDeleteShow, child){
+                  if(deleteShow.value && isMe){
+                    return InkWell(
+                      onTap: ()=>BlocProvider.of<ChatBloc>(context).add(DeleteMessageEvent(contentId: contentId)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(4)
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.close, color: Colors.white,),
+                          ],
+                        ),
+                      ),
+                    );
+                  }else{
+                    return const SizedBox();
+                  }
+                }
             ),
-          ),
-          Stack(
-            children: [
-              Positioned(
-                bottom: 0,
-                right: isMe ? 0 : null,
-                child: Transform(
-                  transform: Matrix4.rotationY(isMe ? pi : 0),
-                  child: CustomPaint(
-                    painter: ChatBubbleTriangle(color: isMe ? Colors.deepPurple : const Color(0xFFF0F0F0)),
-                  ),
-                ),
+            if(contentImg!=null) ChatItemWrapper(
+              isMe: isMe,
+              date: date,
+              userImage: userImage,
+              isImage: true,
+              child: GestureDetector(
+                onTap: ()=>showImageBottomSheet(context),
+                child: Image.network(contentImg!, fit: BoxFit.cover, loadingBuilder: (context,child,loadingProgress){
+                  return loadingProgress==null
+                      ? child
+                      : const SizedBox(width: 100, height: 100, child: Loading(type: shimmer_1),);
+                },),
               ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                constraints: const BoxConstraints(minWidth: 50, maxWidth: 300),
-                decoration: BoxDecoration(
-                  color: isMe ? Colors.deepPurple : const Color(0xFFF0F0F0),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Column(
-                  crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                  children: [
-                    Text(content, style: TextStyle(color: isMe ? Colors.white : Colors.black)),
-                    const SizedBox(height: 5,),
-                    Text(date, style: TextStyle(
-                      fontSize: 10,
-                      color: isMe ? Colors.white54 : Colors.black45, fontWeight: FontWeight.w600, )),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if(isMe) const Padding(
-            padding: EdgeInsets.all(5),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundImage: AssetImage("assets/images/profile_pic.jpeg"),
             ),
-          ),
-        ],
+            if(contentImg!=null) Utils.verticalDividerMedium,
+            if(content.isNotEmpty) ChatItemWrapper(
+              isMe: isMe,
+              date: date,
+              userImage: userImage,
+              isImage: false,
+              child: Text(content, style: TextStyle(color: isMe ? Colors.white : Colors.black)),
+            )
+          ],
+        ),
       ),
     );
   }
+
+  void showImageBottomSheet(BuildContext context){
+    showModalBottomSheet(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        enableDrag: false,
+        shape: const RoundedRectangleBorder( borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25) ),),
+        barrierColor: Theme.of(context).shadowColor.withOpacity(0.6),
+        context: context, builder: (BuildContext context) {
+          return Container(
+            height: 450,
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: ()=>Navigator.pop(context),
+                  child: const Icon(FontAwesomeIcons.x, color: Colors.grey,),
+                ),
+                Expanded(child: InteractiveViewer(
+                  minScale: 0.1,
+                  maxScale: 2,
+                  boundaryMargin: const EdgeInsets.all(10),
+                  child: Center(
+                    child: Image.network(contentImg!, fit: BoxFit.contain),
+                  ),
+                ))
+              ],
+            ),
+          );
+    });
+  }
 }
 
-class ChatBubbleTriangle extends CustomPainter {
 
-  final Color color;
-
-  ChatBubbleTriangle({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()..color = color;
-
-    var path = Path();
-    path.lineTo(-20, 0);
-    path.quadraticBezierTo(10, -10, 5, -70);
-    path.lineTo(10, 0);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}

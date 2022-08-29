@@ -3,7 +3,7 @@ description: E-Learning Platform.
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 4.0.0+4
 
 environment:
   sdk: ">=2.17.5 <3.0.0"
@@ -14,25 +14,39 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  firebase_messaging: ^13.0.0
   font_awesome_flutter: ^10.1.0
   cupertino_icons: ^1.0.2
   firebase_core: ^1.18.0
   firebase_analytics: ^9.1.10
   firebase_crashlytics: ^2.8.2
   firebase_auth: ^3.3.20
+  path_provider: ^2.0.11
   cloud_firestore: ^3.2.1
   firebase_storage: ^10.3.1
   shared_preferences: ^2.0.15
   image_picker: ^0.8.5+3
+  file_picker: ^4.6.1
+  dio: ^4.0.6
+  shimmer: ^2.0.0
   cached_network_image: ^3.2.1
+  permission_handler: ^10.0.0
+  syncfusion_flutter_pdfviewer: ^20.2.38-beta
+  razorpay_flutter: ^1.2.9
   intl: ^0.17.0
+  google_mobile_ads: ^2.0.1
+  connectivity_plus: ^2.3.6
   google_sign_in: ^5.3.3
+  google_fonts: ^3.0.1
   easy_localization: ^3.0.1
   page_transition: ^2.0.5
   flutter_bloc: ^8.0.1
   equatable: ^2.0.3
   url_launcher: ^6.1.4
+  fl_chart: ^0.55.0
   app_settings: ^4.1.8
+  dotted_border: ^2.0.0+2
+  lottie: ^1.4.1
 
 dev_dependencies:
   flutter_test:
@@ -68,4 +82,7 @@ flutter:
           weight: 300
         - asset: assets/fonts/poppins_light.ttf
           weight: 100
+    - family: Freshman
+      fonts:
+        - asset: assets/fonts/freshman.ttf
 

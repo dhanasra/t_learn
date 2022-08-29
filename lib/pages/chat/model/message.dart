@@ -7,7 +7,8 @@ class Message extends Equatable{
   final String? userImage;
   final int dateTime;
   final String content;
-  final String contentImage;
+  final String contentId;
+  final String? contentImage;
   final bool isMe;
 
   const Message({
@@ -16,6 +17,7 @@ class Message extends Equatable{
     required this.dateTime,
     required this.content,
     required this.isMe,
+    required this.contentId,
     required this.contentImage
   });
 
@@ -31,16 +33,17 @@ class Message extends Equatable{
     final dateTime = data['dateTime'];
     final content = data['content'];
     final contentImage = data['contentImage'];
-
+    final contentId = data['contentId'];
     final User user = FirebaseAuth.instance.currentUser!;
 
     return Message(
-        userId: userId,
-        userImage: userImage,
-        dateTime: dateTime,
-        content: content,
-        contentImage: contentImage,
-        isMe: user.uid == userId
+      userId: userId,
+      userImage: userImage,
+      dateTime: dateTime,
+      content: content,
+      contentImage: contentImage,
+      isMe: user.uid == userId,
+      contentId: contentId
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class Toaster {
@@ -27,7 +28,7 @@ class Toaster {
                       fontSize: 14,
                       fontWeight: FontWeight.w600
                     ),
-                  ),
+                  ).tr(),
                 )
             )
           ],

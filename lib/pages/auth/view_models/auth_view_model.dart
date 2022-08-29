@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+import '../model/course.dart';
+
 class AuthViewModel {
 
   static late AuthViewModel _instance;
@@ -14,6 +16,8 @@ class AuthViewModel {
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController nameController;
+
+  static Course? selectedCourse;
 
 
   void _init(){

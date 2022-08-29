@@ -9,7 +9,10 @@ class AuthLoading extends AuthenticationState {}
 
 class AuthSuccess extends AuthenticationState {}
 
+class SavedInLocalDB extends AuthenticationState {}
+
 class AuthFailure extends AuthenticationState {
   final String message;
   AuthFailure({required this.message});
 }
+

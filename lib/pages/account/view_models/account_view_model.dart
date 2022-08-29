@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../utils/constants.dart';
+
 class AccountViewModel {
 
   static late AccountViewModel _instance;
@@ -17,11 +19,12 @@ class AccountViewModel {
   late TextEditingController phoneNumberController;
   late TextEditingController cityController;
 
+  late ValueNotifier isMale;
+
   static String gender = "m";
 
-
   void _init(){
-
+    isMale = ValueNotifier<String>("Male");
     emailController = TextEditingController();
     nameController = TextEditingController();
     phoneNumberController = TextEditingController();
@@ -44,7 +47,7 @@ class AccountViewModel {
     }
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'contact@splitit.com',
+      path: mailto,
       query: encodeQueryParameters(<String, String>{
         'subject': 'Split It User Support'
       }),
@@ -53,7 +56,7 @@ class AccountViewModel {
   }
 
   openPlayStoreRateUs(){
-    final Uri emailLaunchUri = Uri.parse('https://play.google.com/store/apps/details?id=com.whatsapp.w4b',);
+    final Uri emailLaunchUri = Uri.parse('https://play.google.com/store/apps/details?id=com.spiderlingz.t_learn',);
     launchUrl(emailLaunchUri);
   }
 

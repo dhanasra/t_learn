@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:t_learn/app/app.dart';
+import 'package:t_learn/utils/fb.dart';
 
 import 'custom_button.dart';
 
@@ -12,7 +14,7 @@ class CustomSheet {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder( borderRadius: BorderRadius.vertical(
           top: Radius.circular(25) ),),
-      backgroundColor: Colors.white, context: context,
+      backgroundColor: Theme.of(context).cardColor, context: context,
       builder: (BuildContext context) {
         return Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -28,14 +30,18 @@ class CustomSheet {
                     Expanded(
                         child: SizedBox(
                           height: 45,
-                          child: CustomButton(onClick: (){}, btnText: "Yes"),
+                          child: CustomButton(onClick: () async {
+                            await Auth().firebaseAuth.signOut().then((value){
+                              const App().restart(context);
+                            });
+                          }, btnText: "Yes"),
                         )
                     ),
                     const SizedBox(width: 20,),
                     Expanded(
                         child: SizedBox(
                           height: 45,
-                          child: CustomButton.secondary(onClick: (){}, btnText: "No"),
+                          child: CustomButton.secondary(onClick: ()=>Navigator.pop(context), btnText: "No"),
                         )
                     )
                   ],

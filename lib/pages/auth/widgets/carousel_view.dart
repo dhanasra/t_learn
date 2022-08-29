@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:t_learn/utils/utils.dart';
 import 'package:t_learn/utils/widgets/constants.dart';
 
 class CarouselView extends StatelessWidget {
@@ -42,45 +44,14 @@ class CarouselPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            title1,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 30,
-                color: Colors.black.withOpacity(0.7)
-            ),
-          ),
-          Text(
-            title2,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 30,
-                color: Colors.black.withOpacity(0.7)
-            ),
-          ),
-          const Divider(color: Colors.transparent,),
-          Text(
-            content1,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 14,
-                color: Colors.black.withOpacity(0.7)
-            ),
-          ),
-          Text(
-            content2,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 14,
-                color: Colors.black.withOpacity(0.7)
-            ),
-          ),
-          const Divider(color: Colors.transparent,),
+          Text(title1, textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 30)).tr(),
+          Text(title2, textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 30)).tr(),
+          Utils.divider,
+          Text(content1, textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 14)).tr(),
+          Text(content2, textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 14)).tr(),
+          Utils.divider,
           Expanded(child: Image.asset(img),)
         ],
       ),

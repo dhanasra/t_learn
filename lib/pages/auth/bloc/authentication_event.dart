@@ -42,5 +42,6 @@ class SignupEvent extends AuthenticationEvent{
     required this.email,
     required this.password
   });
-
 }
+
+class SaveInLocalDB extends AuthenticationEvent{}

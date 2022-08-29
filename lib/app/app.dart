@@ -1,17 +1,14 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:t_learn/pages/account/views/account_page.dart';
-import 'package:t_learn/pages/account/views/app_settings.dart';
-import 'package:t_learn/pages/account/views/edit_profile.dart';
-import 'package:t_learn/pages/account/views/exam_settings.dart';
-import 'package:t_learn/pages/account/views/my_profile.dart';
-import 'package:t_learn/pages/auth/views/landing_page.dart';
-import 'package:t_learn/pages/auth/views/login_page.dart';
-import 'package:t_learn/pages/chat/views/chat_page.dart';
+import 'package:t_learn/app/app_style.dart';
+import 'package:t_learn/pages/account/bloc/theme/theme_bloc.dart';
+import 'package:t_learn/pages/kbc/views/kbc_main_page.dart';
+import '../pages/splash/views/splash_page.dart';
 import 'app_routes.dart';
 
 class App extends StatelessWidget {
@@ -19,8 +16,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
-    return getMaterialApp(widget: user==null ? const LoginPage() : const ChatPage() , title: 'Launch', buildContext: context);
+    return getMaterialApp(widget: const SplashPage() , title: 'Launch', buildContext: context);
   }
 
   AppRoutes getAppRoutes() {
@@ -28,22 +24,28 @@ class App extends StatelessWidget {
   }
 
   Widget getMaterialApp({required Widget widget, required String title, required BuildContext buildContext}) {
-    return MaterialApp(
-      title: title,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          fontFamily: 'Poppins').copyWith(
-        inputDecorationTheme: const InputDecorationTheme().copyWith(
-            fillColor: Colors.grey.withOpacity(0.2)
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            backgroundColor:  MaterialStateProperty.all(Colors.deepPurple)
-          )
-        )
-      ),
-      home: widget,
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_)=>ThemeBloc(context: buildContext))
+        ],
+        child: BlocBuilder<ThemeBloc,ThemeState>(
+            builder: (_,state){
+              return MaterialApp(
+                title: title,
+                debugShowCheckedModeBanner: false,
+                theme: state is ThemeFetched
+                        ? state.theme=="lightTheme"
+                          ? AppStyle.lightTheme(buildContext)
+                          : AppStyle.darkTheme(buildContext)
+                      : AppStyle.lightTheme(buildContext),
+                home: widget,
+                locale: buildContext.locale,
+                localizationsDelegates: buildContext.localizationDelegates,
+                supportedLocales: buildContext.supportedLocales,
+                onGenerateRoute: getAppRoutes().getRoutes,
+              );
+            },
+        ));
   }
 
   Future<dynamic> setNavigation(BuildContext context, String appRouteName) async {
@@ -70,6 +72,10 @@ class App extends StatelessWidget {
     } else {
       exit(0);
     }
+  }
+
+  void restart(context){
+    const App().setNavigation(context, AppRoutes.splash);
   }
 
 }

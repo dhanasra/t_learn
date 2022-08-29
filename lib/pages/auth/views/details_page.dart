@@ -1,13 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:t_learn/pages/auth/view_models/auth_view_model.dart';
+import 'package:t_learn/widgets/background.dart';
 
 import '../../../app/app.dart';
 import '../../../app/app_routes.dart';
-import '../../../layout/utils/responsive_layout_builder.dart';
+import '../../../utils/utils.dart';
 import '../../../widgets/toaster.dart';
 import '../bloc/authentication_bloc.dart';
-import '../widgets/carousel_view.dart';
 
 
 class DetailsPage extends StatelessWidget {
@@ -15,167 +16,68 @@ class DetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child:BlocListener<AuthenticationBloc, AuthenticationState>(
-            listenWhen: (_,state) {
-              return state is AuthSuccess || state is AuthFailure;
-            },
-            listener: (context, state) {
-              if(state is AuthSuccess) const App().setNavigation(context, AppRoutes.setupLoading);
-              if(state is AuthFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(Toaster.snack(content: state.message));
-                AuthViewModel().clearInputs();
-              }
-            },
-            child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                child: ResponsiveLayoutBuilder(
-                  large: DetailsPageLarge(),
-                  small: MainBody(isLarge: false),
-                )
-            )))
-    );
-  }
-}
 
-class DetailsPageLarge extends StatelessWidget {
-  const DetailsPageLarge({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(
-            child: CarouselView()
-        ),
-        Expanded(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/app_logo.png', height: 50,),
-                    const Text(
-                      'The learning academy',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 30,
-                          color: Colors.deepOrangeAccent
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Card(
-                      elevation: 8,
-                      child: Padding(
-                        padding: EdgeInsets.all(50),
-                        child:  MainBody( isLarge: true,),
-                      ),
-                    )
-                  ],
-                ),
-                const Spacer()
-              ],
-            )
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
+        listenWhen: (_,state) {
+          return state is AuthSuccess || state is AuthFailure;
+        },
+        listener: (context, state) {
+          if(state is AuthSuccess) const App().setNavigation(context, AppRoutes.exam);
+          if(state is AuthFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(Toaster.snack(content: state.message));
+            AuthViewModel().clearInputs();
+          }
+        },
+        child: const Background(
+          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+          child: MainBody(),
         )
-      ],
     );
   }
 }
-
 
 class MainBody extends StatelessWidget {
 
-  final bool isLarge;
-  const MainBody({Key? key, required this.isLarge}) : super(key: key);
+  const MainBody({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
     final viewModel = AuthViewModel();
 
-    return Column(
-      crossAxisAlignment: isLarge ? CrossAxisAlignment.start : CrossAxisAlignment.start,
+    return ListView(
       children: [
-        Text(
-          "Let's say about you",
-          style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: isLarge ? 20 : 30,
-              color: Colors.black.withOpacity(0.7)
-          ),
+        const Text("Tell about you", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 30,)).tr(),
+
+        Utils.dividerMedium,
+
+        Row(children: [
+          Text('explore_at', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Theme.of(context).canvasColor.withOpacity(0.6))).tr(),
+          Utils.verticalDividerSmall,
+          const Text('app_name', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.deepOrangeAccent)).tr()
+        ]),
+
+        Utils.divider_50,
+
+        TextField(
+            style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
+            controller: viewModel.nameController,
+            decoration: const InputDecoration(labelText: 'Full name')
         ),
-        const Divider(color:Colors.transparent,height: 10,),
-        Row(
-          mainAxisAlignment: isLarge ? MainAxisAlignment.center : MainAxisAlignment.start,
-          children: [
-            Text(
-              'Explore the best learning at ',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: isLarge ? 12 : 14,
-                  color: Colors.grey.withOpacity(0.8)
-              ),
-            ),
-            const SizedBox(width: 5,),
-            const Text(
-              'TL',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                  color: Colors.deepOrangeAccent
-              ),
-            ),
-          ],
-        ),
-        const Divider(color:Colors.transparent,height: 40,),
-        Align(
-          alignment: Alignment.center,
-          child: SizedBox(
-            width: 400,
-            child: Column(
-              children: [
-                TextField(
-                  autofocus: false,
-                  style: const TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500
-                  ),
-                  controller: viewModel.nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Full name',
-                  ),
-                ),
-                const Divider(height: 50,color: Colors.transparent,),
-                BlocBuilder<AuthenticationBloc,AuthenticationState>(
-                    builder: (_,state){
-                      return ElevatedButton(
-                          onPressed: state is AuthLoading
-                              ? null
-                              : (){ BlocProvider.of<AuthenticationBloc>(context)
-                              .add(UserDetailsEvent(
-                              name: viewModel.nameController.text));},
-                          style: ElevatedButton.styleFrom( minimumSize: Size(double.infinity, isLarge ? 60 : 50), ),
-                          child: (state is! AuthLoading)
-                              ? Text( 'Continue', style: TextStyle( fontSize: isLarge ? 16 : 14 ),)
-                              : const SizedBox( height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2,),)
-                      );
-                    }),
-                const Divider(height: 20,color: Colors.transparent,),
-              ],
-            ),
-          ),
-        )
+
+        Utils.divider_50,
+
+        BlocBuilder<AuthenticationBloc,AuthenticationState>(
+            builder: (_,state){
+              return ElevatedButton(
+                  onPressed: state is AuthLoading
+                      ? null
+                      : ()=> BlocProvider.of<AuthenticationBloc>(context).add(
+                      UserDetailsEvent(name: viewModel.nameController.text)),
+                  style: ElevatedButton.styleFrom( minimumSize: const Size(double.infinity, 50)),
+                  child: state is! AuthLoading ? const Text( 'continue').tr() : Utils.buttonProgressIndicator
+              );
+            }),
       ],
     );
   }
